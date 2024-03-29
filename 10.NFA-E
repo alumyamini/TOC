@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_STATES 10
+
+int n, m; // Number of states and number of transitions
+bool epsilon[MAX_STATES][MAX_STATES];
+bool visited[MAX_STATES];
+
+void addEpsilonClosure(int state, int current) {
+    visited[current] = true;
+    for (int i = 0; i < n; ++i) {
+        if (!visited[i] && epsilon[current][i]) {
+            addEpsilonClosure(state, i);
+        }
+    }
+}
+
+void epsilonClosure() {
+    printf("e-Closure of States:\n");
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            visited[j] = false;
+        }
+        printf("e-Closure(%d) : { ", i);
+        addEpsilonClosure(i, i);
+        for (int j = 0; j < n; ++j) {
+            if (visited[j]) {
+                printf("%d ", j);
+            }
+        }
+        printf("}\n");
+    }
+}
+
+int main() {
+    printf("Enter the number of states: ");
+    scanf("%d", &n);
+
+    printf("Enter the number of transitions: ");
+    scanf("%d", &m);
+
+    printf("Enter the transitions (in the format: from_state to_state):\n");
+    for (int i = 0; i < m; ++i) {
+        int from, to;
+        scanf("%d %d", &from, &to);
+        epsilon[from][to] = true;
+    }
+
+    epsilonClosure();
+
+    return 0;
+}
